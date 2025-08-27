@@ -1,0 +1,2 @@
+import"../chunks/DsnmJJEf.js";import"../chunks/Bl2ve74G.js";import{i as s,j as i,k as f,s as l,l as d,m as u,n as m}from"../chunks/DO9iJrqc.js";function c(n,t,r,e,_){s&&i();var a=t.$$slots?.[r],o=!1;a===!0&&(a=t.children,o=!0),a===void 0||a(n,o?()=>e:e)}var p=f(`// src/routes/+layout.ts
+export const prerender = true; <!>`,1);function y(n,t){m();var r=p(),e=l(d(r));c(e,t,"default",{}),u(n,r)}export{y as component};
