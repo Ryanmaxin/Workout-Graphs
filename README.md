@@ -1,38 +1,72 @@
-# sv
+# 💪 Workout Progress Tracker
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A modern web application built with SvelteKit and Tailwind CSS to visualize your workout progression over time. The app reads workout data from a CSV file and provides interactive charts to track your fitness journey.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- 📊 **Interactive Charts**: Visualize your progress with beautiful line charts
+- 🎯 **Multiple Metrics**: Track max weight, total volume, and average reps
+- 🔍 **Filter by Workout Type**: Focus on specific workout routines
+- 📱 **Responsive Design**: Works perfectly on desktop and mobile devices
+- ⚡ **Fast & Modern**: Built with SvelteKit for optimal performance
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Tech Stack
 
-# create a new project in my-app
-npx sv create my-app
-```
+- **Frontend**: SvelteKit with TypeScript
+- **Styling**: Tailwind CSS
+- **Charts**: Chart.js with date-fns adapter
+- **Data Processing**: PapaParse for CSV parsing
 
-## Developing
+## Getting Started
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+1. **Install dependencies**:
 
-```sh
-npm run dev
+   ```bash
+   npm install
+   ```
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+2. **Add your workout data**:
 
-## Building
+   - Place your `strong.csv` file in the `static/` directory
+   - The CSV should have columns: Date, Workout Name, Duration, Exercise Name, Set Order, Weight, Reps, Distance, Seconds, RPE
 
-To create a production version of your app:
+3. **Start the development server**:
 
-```sh
-npm run build
-```
+   ```bash
+   npm run dev
+   ```
 
-You can preview the production build with `npm run preview`.
+4. **Open your browser**:
+   Navigate to `http://localhost:5173`
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Usage
+
+1. **Select Workout Type**: Choose a specific workout routine or view all workouts
+2. **Pick an Exercise**: Select the exercise you want to track
+3. **Choose Chart Type**: View max weight, total volume, or average reps
+4. **Analyze Progress**: The chart shows your progression over time with key statistics
+
+## Data Format
+
+The app expects a CSV file with the following columns:
+
+- `Date`: Workout date and time
+- `Workout Name`: Name of the workout routine
+- `Duration`: Workout duration
+- `Exercise Name`: Name of the exercise
+- `Set Order`: Set number
+- `Weight`: Weight used (in lbs)
+- `Reps`: Number of repetitions
+- `Distance`: Distance (if applicable)
+- `Seconds`: Time duration (if applicable)
+- `RPE`: Rate of perceived exertion
+
+## Development
+
+- **Build for production**: `npm run build`
+- **Preview production build**: `npm run preview`
+- **Check types**: `npm run check`
+
+## License
+
+MIT License - feel free to use this project for your own workout tracking needs!
