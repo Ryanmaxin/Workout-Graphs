@@ -27,14 +27,38 @@ export function parseCSVData(csvText: string): WorkoutEntry[] {
   return result.data as WorkoutEntry[];
 }
 
-export async function loadWorkoutData(): Promise<WorkoutEntry[]> {
+export async function loadWorkoutData(options?: {
+  /** Provide a File from an <input type="file"> */
+  file?: File;
+  /** Provide a URL to fetch CSV from */
+  url?: string;
+  /** Provide raw CSV text directly */
+  csvText?: string;
+}): Promise<WorkoutEntry[]> {
   try {
-    // Use the correct base path for GitHub Pages deployment
-    const basePath = import.meta.env.BASE_URL || "";
-    const response = await fetch(`${basePath}strong.csv`);
-    const csvText = await response.text();
+    // 1) Raw CSV text provided directly
+    if (options?.csvText) {
+      return parseCSVData(options.csvText);
+    }
 
-    return parseCSVData(csvText);
+    // 2) Browser File object (from a file input)
+    if (options?.file) {
+      const text = await options.file.text();
+      return parseCSVData(text);
+    }
+
+    // 3) Explicit URL to fetch from
+    if (options?.url) {
+      const response = await fetch(options.url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch CSV from URL: ${response.status}`);
+      }
+      const text = await response.text();
+      return parseCSVData(text);
+    }
+
+    // No source provided — return empty so the UI can prompt for upload
+    return [];
   } catch (error) {
     console.error("Error loading workout data:", error);
     return [];
