@@ -10,6 +10,10 @@ A modern web application built with SvelteKit and Tailwind CSS to visualize your
 - 📱 **Responsive Design**: Works perfectly on desktop and mobile devices
 - ⚡ **Fast & Modern**: Built with SvelteKit for optimal performance
 
+## Hosted Version
+
+The app is hosted at [https://ryanmaxin.github.io/Workout-Graphs/](https://ryanmaxin.github.io/Workout-Graphs/).
+
 ## Tech Stack
 
 - **Frontend**: SvelteKit with TypeScript
@@ -17,34 +21,12 @@ A modern web application built with SvelteKit and Tailwind CSS to visualize your
 - **Charts**: Chart.js with date-fns adapter
 - **Data Processing**: PapaParse for CSV parsing
 
-## Getting Started
-
-1. **Install dependencies**:
-
-   ```bash
-   npm install
-   ```
-
-2. **Add your workout data**:
-
-   - Place your `strong.csv` file in the `static/` directory
-   - The CSV should have columns: Date, Workout Name, Duration, Exercise Name, Set Order, Weight, Reps, Distance, Seconds, RPE
-
-3. **Start the development server**:
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**:
-   Navigate to `http://localhost:5173`
-
 ## Usage
 
-1. **Select Workout Type**: Choose a specific workout routine or view all workouts
-2. **Pick an Exercise**: Select the exercise you want to track
-3. **Choose Chart Type**: View max weight, total volume, or average reps
-4. **Analyze Progress**: The chart shows your progression over time with key statistics
+1. **Upload Your CSV File**: Begin by uploading your workout CSV file through the app interface.
+2. **Pick an Exercise**: Select the exercise you want to track.
+3. **Choose Chart Type**: View max weight, total volume, or average reps.
+4. **Analyze Progress**: The chart shows your progression over time with key statistics.
 
 ## Data Format
 
