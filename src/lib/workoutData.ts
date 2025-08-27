@@ -16,11 +16,11 @@ export async function loadWorkoutData(): Promise<WorkoutEntry[]> {
       skipEmptyLines: true,
       transform: (value, field) => {
         if (
-          field === "setOrder" ||
-          field === "weight" ||
-          field === "reps" ||
-          field === "distance" ||
-          field === "seconds"
+          field === "Set Order" ||
+          field === "Weight" ||
+          field === "Reps" ||
+          field === "Distance" ||
+          field === "Seconds"
         ) {
           return parseFloat(value) || 0;
         }
@@ -35,6 +35,11 @@ export async function loadWorkoutData(): Promise<WorkoutEntry[]> {
   }
 }
 
+export function calculate1RM(weight: number, reps: number): number {
+  // Epley formula: 1RM = weight × (1 + reps/30)
+  return weight * (1 + reps / 30);
+}
+
 export function processWorkoutData(
   entries: WorkoutEntry[]
 ): ProcessedWorkoutData[] {
@@ -44,7 +49,7 @@ export function processWorkoutData(
   const grouped = new Map<string, WorkoutEntry[]>();
 
   entries.forEach((entry) => {
-    const key = `${entry.date}|${entry.workoutName}|${entry.exerciseName}`;
+    const key = `${entry.Date}|${entry["Workout Name"]}|${entry["Exercise Name"]}`;
     if (!grouped.has(key)) {
       grouped.set(key, []);
     }
@@ -56,9 +61,14 @@ export function processWorkoutData(
     const [dateStr, workoutName, exerciseName] = key.split("|");
     const date = parseISO(dateStr);
 
-    const maxWeight = Math.max(...sets.map((s) => s.weight));
-    const totalVolume = sets.reduce((sum, s) => sum + s.weight * s.reps, 0);
-    const avgReps = sets.reduce((sum, s) => sum + s.reps, 0) / sets.length;
+    const maxWeight = Math.max(...sets.map((s) => s.Weight));
+    const totalVolume = sets.reduce((sum, s) => sum + s.Weight * s.Reps, 0);
+    const avgReps = sets.reduce((sum, s) => sum + s.Reps, 0) / sets.length;
+
+    // Calculate estimated 1RM for each set and take the maximum
+    const estimated1RM = Math.max(
+      ...sets.map((s) => calculate1RM(s.Weight, s.Reps))
+    );
 
     processed.push({
       date,
@@ -68,6 +78,7 @@ export function processWorkoutData(
       totalVolume,
       avgReps,
       sets: sets.length,
+      estimated1RM,
     });
   });
 
@@ -75,13 +86,32 @@ export function processWorkoutData(
 }
 
 export function getWorkoutTypes(entries: WorkoutEntry[]): string[] {
-  const workoutTypes = new Set(entries.map((entry) => entry.workoutName));
+  const workoutTypes = new Set(entries.map((entry) => entry["Workout Name"]));
   return Array.from(workoutTypes).sort();
 }
 
 export function getExercises(entries: WorkoutEntry[]): string[] {
-  const exercises = new Set(entries.map((entry) => entry.exerciseName));
-  return Array.from(exercises).sort();
+  const exercises = new Set(entries.map((entry) => entry["Exercise Name"]));
+
+  // Count sessions for each exercise
+  const exerciseSessionCounts = new Map<string, number>();
+  exercises.forEach((exercise) => {
+    const sessions = entries.filter(
+      (entry) => entry["Exercise Name"] === exercise
+    );
+    exerciseSessionCounts.set(exercise, sessions.length);
+  });
+
+  // Sort by session count (descending) then alphabetically
+  return Array.from(exercises).sort((a, b) => {
+    const countA = exerciseSessionCounts.get(a) || 0;
+    const countB = exerciseSessionCounts.get(b) || 0;
+
+    if (countA !== countB) {
+      return countB - countA; // Most sessions first
+    }
+    return a.localeCompare(b); // Alphabetical tiebreaker
+  });
 }
 
 export function getExerciseProgression(
@@ -96,6 +126,7 @@ export function getExerciseProgression(
       totalVolume: entry.totalVolume,
       avgReps: entry.avgReps,
       sets: entry.sets,
+      estimated1RM: entry.estimated1RM,
     }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 

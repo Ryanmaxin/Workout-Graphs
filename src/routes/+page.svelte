@@ -4,7 +4,6 @@
   import {
     getExerciseProgression,
     getExercises,
-    getWorkoutTypes,
     loadWorkoutData,
     processWorkoutData
   } from '$lib/workoutData';
@@ -12,11 +11,9 @@
 
   let workoutData: WorkoutEntry[] = [];
   let processedData: ProcessedWorkoutData[] = [];
-  let workoutTypes: string[] = [];
   let exercises: string[] = [];
-  let selectedWorkoutType = '';
   let selectedExercise = '';
-  let selectedChartType: 'weight' | 'volume' | 'reps' = 'weight';
+  let selectedChartType: 'weight' | 'volume' | 'reps' | '1rm' = '1rm';
   let currentProgression: ExerciseProgression | null = null;
   let loading = true;
   let error = '';
@@ -24,30 +21,23 @@
   onMount(async () => {
     try {
       loading = true;
-      console.log('Loading workout data...');
       workoutData = await loadWorkoutData();
-      console.log('Raw workout data:', workoutData.length, 'entries');
-      console.log('Sample entry:', workoutData[0]);
+      
+      if (workoutData.length === 0) {
+        error = 'No workout data found';
+        return;
+      }
       
       processedData = processWorkoutData(workoutData);
-      console.log('Processed data:', processedData.length, 'entries');
-      
-      workoutTypes = getWorkoutTypes(workoutData);
-      console.log('Workout types:', workoutTypes);
-      
       exercises = getExercises(workoutData);
-      console.log('Exercises:', exercises);
       
-      if (workoutTypes.length > 0) {
-        selectedWorkoutType = workoutTypes[0];
-      }
       if (exercises.length > 0) {
         selectedExercise = exercises[0];
         updateProgression();
       }
     } catch (err) {
+      console.error("Error in onMount:", err);
       error = 'Failed to load workout data';
-      console.error('Error loading data:', err);
     } finally {
       loading = false;
     }
@@ -56,29 +46,11 @@
   function updateProgression() {
     if (selectedExercise) {
       currentProgression = getExerciseProgression(processedData, selectedExercise);
-      console.log('Updated progression for:', selectedExercise, currentProgression);
     }
   }
 
   $: if (selectedExercise) {
     updateProgression();
-  }
-
-  function filterByWorkoutType() {
-    if (selectedWorkoutType) {
-      const filteredData = processedData.filter(entry => entry.workoutName === selectedWorkoutType);
-      exercises = getExercises(workoutData.filter(entry => entry.workoutName === selectedWorkoutType));
-      if (exercises.length > 0 && !exercises.includes(selectedExercise)) {
-        selectedExercise = exercises[0];
-      }
-    } else {
-      exercises = getExercises(workoutData);
-    }
-    console.log('Filtered exercises:', exercises);
-  }
-
-  $: if (selectedWorkoutType !== undefined) {
-    filterByWorkoutType();
   }
 </script>
 
@@ -106,32 +78,9 @@
         <p class="text-red-700 font-medium">{error}</p>
       </div>
     {:else}
-      <!-- Debug Info -->
-      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
-        <p class="text-sm text-yellow-800">
-          Debug: {workoutData.length} raw entries, {exercises.length} exercises, {workoutTypes.length} workout types
-        </p>
-      </div>
-
       <!-- Controls -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-2">
-            <label for="workout-type" class="block text-sm font-semibold text-gray-700">
-              Workout Type:
-            </label>
-            <select 
-              id="workout-type" 
-              bind:value={selectedWorkoutType}
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            >
-              <option value="">All Workouts</option>
-              {#each workoutTypes as type}
-                <option value={type}>{type}</option>
-              {/each}
-            </select>
-          </div>
-
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label for="exercise" class="block text-sm font-semibold text-gray-700">
               Exercise:
@@ -156,6 +105,7 @@
               bind:value={selectedChartType}
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             >
+              <option value="1rm">Estimated 1RM</option>
               <option value="weight">Max Weight</option>
               <option value="volume">Total Volume</option>
               <option value="reps">Average Reps</option>
@@ -182,13 +132,15 @@
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
               <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                Best {selectedChartType === 'weight' ? 'Weight' : selectedChartType === 'volume' ? 'Volume' : 'Reps'}
+                Best {selectedChartType === 'weight' ? 'Weight' : selectedChartType === 'volume' ? 'Volume' : selectedChartType === '1rm' ? '1RM' : 'Reps'}
               </h3>
               <p class="text-3xl font-bold text-gray-900">
                 {selectedChartType === 'weight' 
                   ? Math.max(...currentProgression.data.map(d => d.maxWeight)).toFixed(1) + ' lbs'
                   : selectedChartType === 'volume'
                   ? Math.max(...currentProgression.data.map(d => d.totalVolume)).toFixed(0) + ' lbs'
+                  : selectedChartType === '1rm'
+                  ? Math.max(...currentProgression.data.map(d => d.estimated1RM)).toFixed(1) + ' lbs'
                   : Math.max(...currentProgression.data.map(d => d.avgReps)).toFixed(1)
                 }
               </p>

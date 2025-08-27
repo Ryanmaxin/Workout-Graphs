@@ -7,12 +7,12 @@
   Chart.register(...registerables);
 
   export let progression: ExerciseProgression;
-  export let chartType: 'weight' | 'volume' | 'reps' = 'weight';
+  export let chartType: 'weight' | 'volume' | 'reps' | '1rm' = 'weight';
 
   let canvas: HTMLCanvasElement;
   let chart: Chart | null = null;
 
-  $: if (progression && canvas) {
+  $: if (progression && canvas && chartType) {
     updateChart();
   }
 
@@ -33,6 +33,8 @@
           return d.totalVolume;
         case 'reps':
           return d.avgReps;
+        case '1rm':
+          return d.estimated1RM;
         default:
           return d.maxWeight;
       }
@@ -41,7 +43,8 @@
     const chartTitle = {
       weight: 'Max Weight (lbs)',
       volume: 'Total Volume (lbs)',
-      reps: 'Average Reps'
+      reps: 'Average Reps',
+      '1rm': 'Estimated 1RM (lbs)'
     }[chartType];
 
     chart = new Chart(ctx, {
@@ -101,7 +104,7 @@
             }
           },
           y: {
-            beginAtZero: true,
+            beginAtZero: false,
             title: {
               display: true,
               text: chartTitle,
@@ -111,6 +114,11 @@
             },
             grid: {
               color: 'rgba(0, 0, 0, 0.1)'
+            },
+            ticks: {
+              callback: function(value, index, values) {
+                return value.toLocaleString();
+              }
             }
           }
         },
@@ -135,6 +143,6 @@
   });
 </script>
 
-<div class="relative h-96 w-full">
+<div class="relative h-[500px] w-full">
   <canvas bind:this={canvas}></canvas>
 </div>

@@ -1,14 +1,14 @@
 export interface WorkoutEntry {
-  date: string;
-  workoutName: string;
-  duration: string;
-  exerciseName: string;
-  setOrder: number;
-  weight: number;
-  reps: number;
-  distance: number;
-  seconds: number;
-  rpe: string;
+  Date: string;
+  "Workout Name": string;
+  Duration: string;
+  "Exercise Name": string;
+  "Set Order": number;
+  Weight: number;
+  Reps: number;
+  Distance: number;
+  Seconds: number;
+  RPE: string;
 }
 
 export interface ProcessedWorkoutData {
@@ -19,6 +19,7 @@ export interface ProcessedWorkoutData {
   totalVolume: number;
   avgReps: number;
   sets: number;
+  estimated1RM: number;
 }
 
 export interface ExerciseProgression {
@@ -29,5 +30,6 @@ export interface ExerciseProgression {
     totalVolume: number;
     avgReps: number;
     sets: number;
+    estimated1RM: number;
   }[];
 }
