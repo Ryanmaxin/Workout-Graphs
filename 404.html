@@ -4,42 +4,39 @@
     <meta charset="utf-8" />
     <link rel="icon" href="/Workout-Graphs/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Workout Graphs App" />
-    <title>Workout Graphs</title>
-    <script>
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      // This script takes the current url and converts the path and query
-      // string into just a query string, and then redirects the browser
-      // to the new url with only a query string and hash fragment.
-      var pathSegmentsToKeep = 1;
-
-      var l = window.location;
-      l.replace(
-        l.protocol +
-          "//" +
-          l.hostname +
-          (l.port ? ":" + l.port : "") +
-          l.pathname
-            .split("/")
-            .slice(0, 1 + pathSegmentsToKeep)
-            .join("/") +
-          "/?/" +
-          l.pathname
-            .slice(1)
-            .split("/")
-            .slice(pathSegmentsToKeep)
-            .join("/")
-            .replace(/&/g, "~and~") +
-          (l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "") +
-          l.hash
-      );
-    </script>
+    <title>Workout Progress Tracker</title>
+    <meta
+      name="description"
+      content="Track and visualize your workout progress over time"
+    />
+    
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/entry/start.CdOayfpU.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/chunks/B1ZTOPAw.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/chunks/fgQNRF2S.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/chunks/Dqd40s02.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/entry/app.DITl6aSx.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/chunks/DsnmJJEf.js">
+		<link rel="modulepreload" href="/Workout-Graphs/_app/immutable/chunks/DDN9iReH.js">
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+			<script>
+				{
+					__sveltekit_q26luj = {
+						base: "/Workout-Graphs",
+						assets: "/Workout-Graphs"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/Workout-Graphs/_app/immutable/entry/start.CdOayfpU.js"),
+						import("/Workout-Graphs/_app/immutable/entry/app.DITl6aSx.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
   </body>
 </html>
