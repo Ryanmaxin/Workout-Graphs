@@ -6,29 +6,35 @@ import type {
   WorkoutEntry,
 } from "./types";
 
+export function parseCSVData(csvText: string): WorkoutEntry[] {
+  const result = Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transform: (value, field) => {
+      if (
+        field === "Set Order" ||
+        field === "Weight" ||
+        field === "Reps" ||
+        field === "Distance" ||
+        field === "Seconds"
+      ) {
+        return parseFloat(value) || 0;
+      }
+      return value;
+    },
+  });
+
+  return result.data as WorkoutEntry[];
+}
+
 export async function loadWorkoutData(): Promise<WorkoutEntry[]> {
   try {
-    const response = await fetch("/strong.csv");
+    // Use the correct base path for GitHub Pages deployment
+    const basePath = import.meta.env.BASE_URL || "";
+    const response = await fetch(`${basePath}strong.csv`);
     const csvText = await response.text();
 
-    const result = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transform: (value, field) => {
-        if (
-          field === "Set Order" ||
-          field === "Weight" ||
-          field === "Reps" ||
-          field === "Distance" ||
-          field === "Seconds"
-        ) {
-          return parseFloat(value) || 0;
-        }
-        return value;
-      },
-    });
-
-    return result.data as WorkoutEntry[];
+    return parseCSVData(csvText);
   } catch (error) {
     console.error("Error loading workout data:", error);
     return [];
